@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>POS System Presentation</title>
+<style>
+  @page { size: A4 landscape; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; color: #1e293b; }
+
+  .slide {
+    width: 297mm; height: 210mm;
+    padding: 40px 60px;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .slide:last-child { page-break-after: avoid; }
+
+  /* Slide themes */
+  .slide-cover {
+    background: linear-gradient(135deg, #0f172a 0%, #166534 60%, #16a34a 100%);
+    color: white;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  }
+  .slide-green { background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 40%); }
+  .slide-dark { background: #0f172a; color: #f1f5f9; }
+  .slide-white { background: #ffffff; }
+  .slide-accent {
+    background: linear-gradient(135deg, #166534 0%, #16a34a 100%);
+    color: white;
+    text-align: center;
+    align-items: center;
+  }
+
+  h1 { font-size: 42px; font-weight: 800; line-height: 1.1; margin-bottom: 16px; }
+  h2 { font-size: 32px; font-weight: 700; color: #166534; margin-bottom: 20px; }
+  .slide-dark h2 { color: #4ade80; }
+  .slide-accent h2 { color: white; }
+  h3 { font-size: 22px; font-weight: 600; margin-bottom: 12px; color: #334155; }
+  p { font-size: 18px; line-height: 1.6; color: #475569; }
+  .slide-dark p { color: #cbd5e1; }
+
+  .subtitle { font-size: 22px; color: #94a3b8; margin-top: 8px; }
+  .slide-cover .subtitle { color: #86efac; }
+
+  .badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; margin: 4px; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-white { background: rgba(255,255,255,0.2); color: white; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-top: 20px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
+
+  .card {
+    background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 24px; transition: all 0.2s;
+  }
+  .slide-dark .card { background: #1e293b; border-color: #334155; }
+  .card h3 { margin-bottom: 8px; }
+  .card p { font-size: 15px; }
+
+  .stat { text-align: center; padding: 20px; }
+  .stat .number { font-size: 48px; font-weight: 800; color: #16a34a; line-height: 1; }
+  .slide-dark .stat .number { color: #4ade80; }
+  .stat .label { font-size: 14px; color: #64748b; margin-top: 6px; }
+  .slide-dark .stat .label { color: #94a3b8; }
+
+  .icon { font-size: 36px; margin-bottom: 12px; }
+
+  ul { list-style: none; padding: 0; }
+  ul li { padding: 8px 0; font-size: 17px; padding-left: 24px; position: relative; }
+  ul li::before { content: '✓'; color: #16a34a; font-weight: bold; position: absolute; left: 0; }
+  .slide-dark ul li::before { color: #4ade80; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  th { background: #166534; color: white; padding: 10px 14px; text-align: left; font-size: 14px; }
+  td { padding: 8px 14px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+  tr:nth-child(even) { background: #f8fafc; }
+
+  .page-num { position: absolute; bottom: 20px; right: 40px; font-size: 12px; color: #94a3b8; }
+  .slide-dark .page-num { color: #475569; }
+
+  .logo-area { position: absolute; top: 30px; left: 60px; font-size: 14px; font-weight: 700; color: #166534; letter-spacing: 1px; }
+  .slide-dark .logo-area, .slide-accent .logo-area { color: rgba(255,255,255,0.7); }
+
+  .feature-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 12px; }
+  .icon-green { background: #dcfce7; }
+  .icon-blue { background: #dbeafe; }
+  .icon-amber { background: #fef3c7; }
+  .icon-red { background: #fee2e2; }
+  .icon-purple { background: #f3e8ff; }
+
+  .timeline { position: relative; padding-left: 30px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: #16a34a; }
+  .timeline-item { position: relative; margin-bottom: 20px; }
+  .timeline-item::before { content: ''; position: absolute; left: -26px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #16a34a; border: 2px solid white; }
+  .slide-dark .timeline-item::before { border-color: #0f172a; }
+
+  .price-box { background: #f0fdf4; border: 2px solid #16a34a; border-radius: 16px; padding: 30px; text-align: center; margin-top: 20px; }
+  .price-box .amount { font-size: 56px; font-weight: 800; color: #166534; }
+  .price-box .period { font-size: 16px; color: #64748b; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: COVER -->
+<div class="slide slide-cover">
+  <div style="max-width: 700px;">
+    <div style="font-size: 64px; margin-bottom: 20px;">🛒</div>
+    <h1 style="font-size: 48px; margin-bottom: 12px;">POS SYSTEM</h1>
+    <p class="subtitle" style="font-size: 24px; color: #86efac;">Kenyan Supermarket</p>
+    <p style="color: #94a3b8; margin-top: 30px; font-size: 16px;">Modern Point-of-Sale Solution for East African Retail</p>
+    <div style="margin-top: 40px;">
+      <span class="badge badge-white">NestJS</span>
+      <span class="badge badge-white">React</span>
+      <span class="badge badge-white">Electron</span>
+      <span class="badge badge-white">PostgreSQL</span>
+      <span class="badge badge-white">M-Pesa</span>
+      <span class="badge badge-white">Barcode</span>
+    </div>
+  </div>
+  <div class="page-num">1</div>
+</div>
+
+<!-- SLIDE 2: THE PROBLEM -->
+<div class="slide slide-white">
+  <div class="logo-area">POS SYSTEM</div>
+  <h2>The Problem</h2>
+  <p style="font-size: 20px; margin-bottom: 30px;">Kenyan supermarkets face critical operational challenges</p>
+  <div class="grid-3">
+    <div class="card">
+      <div class="feature-icon icon-red">❌</div>
+      <h3>Manual Processes</h3>
+      <p>Handwritten receipts, manual stock counts, paper-based records leading to errors and lost revenue</p>
+    </div>
+    <div class="card">
+      <div class="feature-icon icon-red">❌</div>
+      <h3>No Real-Time Data</h3>
+      <p>Owners have zero visibility into sales, stock levels, or cash flow during operating hours</p>
+    </div>
+    <div class="card">
+      <div class="feature-icon icon-red">❌</div>
+      <h3>Payment Friction</h3>
+      <p>Separate M-Pesa processes, manual reconciliation, long queues at checkout</p>
+    </div>
+  </div>
+  <div style="margin-top: 30px; background: #fef2f2; border-radius: 12px; padding: 20px; text-align: center;">
+    <p style="color: #991b1b; font-size: 20px; font-weight: 600;">Kenya loses an estimated KES 2.5 billion annually to retail inventory shrinkage and poor stock management</p>
+  </div>
+  <div class="page-num">2</div>
+</div>
+
+<!-- SLIDE 3: THE SOLUTION -->
+<div class="slide slide-green">
+  <div class="logo-area">POS SYSTEM</div>
+  <h2>Our Solution</h2>
+  <p style="font-size: 20px; margin-bottom: 30px;">A complete, modern POS system built for Kenyan supermarkets</p>
+  <div class="grid-2">
+    <div>
+      <ul>
+        <li><strong>Barcode scanning</strong> — Instant product lookup, zero typing errors</li>
+        <li><strong>M-Pesa STK Push</strong> — Seamless mobile payments at the till</li>
+        <li><strong>Real-time inventory</strong> — Know your stock levels every second</li>
+        <li><strong>Cash management</strong> — Automated float tracking and reconciliation</li>
+        <li><strong>Department reports</strong> — Print performance reports by category</li>
+        <li><strong>Multi-user roles</strong> — Admin, Manager, Cashier, Inventory Clerk</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card" style="border-color: #16a34a; border-width: 2px;">
+        <h3 style="color: #166534;">Built for Kenya</h3>
+        <ul>
+          <li>KES currency with 16% VAT (KRA compliant)</li>
+          <li>M-Pesa Lipa Na M-Pesa integration</li>
+          <li>Works offline — sync when connected</li>
+          <li>Thermal receipt printer support</li>
+          <li>Runs on any Windows/Mac/Linux PC</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">3</div>
+</div>
+
+<!-- SLIDE 4: KEY FEATURES -->
+<div class="slide slide-dark">
+  <div class="logo-area">POS SYSTEM</div>
+  <h2>Key Features</h2>
+  <div class="grid-4">
+    <div class="card">
+      <div style="font-size: 32px; margin-bottom: 10px;">📱</div>
+      <h3 style="color: #f1f5f9;">POS Terminal</h3>
+      <p>Barcode scanner integration, auto-focus input, instant cart management</p>
+    </div>
+    <div class="card">
+      <div style="font-size: 32px; margin-bottom: 10px;">📦</div>
+      <h3 style="color: #f1f5f9;">Inventory</h3>
+      <p>Stock tracking, low-stock alerts, inter-branch transfers, damage logging</p>
+    </div>
+    <div class="card">
+      <div style="font-size: 32px; margin-bottom: 10px;">💰</div>
+      <h3 style="color: #f1f5f9;">Cash Management</h3>
+      <p>Session tracking, cash in/out, expense recording, end-of-day reconciliation</p>
+    </div>
+    <div class="card">
+      <div style="font-size: 32px; margin-bottom: 10px;">📊</div>
+      <h3 style="color: #f1f5f9;">Reports</h3>
+      <p>Department reports, sales analytics, top products, printable PDFs</p>
+    </div>
+    <div class="card">
+      <div style="font-size: 32px; margin-bottom: 10px;">👥</div>
+      <h3 style="color: #f1f5f9;">Customers</h3>
+      <p>Loyalty program, Bronze/Silver/Gold tiers, point tracking</p>
+    </div>
+    <div class="card">
+      <div style="font-size: 32px; margin-bottom: 10px;">💳</div>
+      <h3 style="color: #f1f5f9;">M-Pesa</h3>
+      <p>STK Push payments, automatic callback, real-time confirmation</p>
+    </div>
+    <div class="card">
+      <div style="font-size: 32px; margin-bottom: 10px;">🔐</div>
+      <h3 style="color: #f1f5f9;">Security</h3>
+      <p>Role-based access, JWT auth, PIN login, full audit trail</p>
+    </div>
+    <div class="card">
+      <div style="font-size: 32px; margin-bottom: 10px;">🖥️</div>
+      <h3 style="color: #f1f5f9;">Desktop App</h3>
+      <p>Electron packaging, runs offline, auto-updates ready</p>
+    </div>
+  </div>
+  <div class="page-num">4</div>
+</div>
+
+<!-- SLIDE 5: TECHNICAL ARCHITECTURE -->
+<div class="slide slide-white">
+  <div class="logo-area">POS SYSTEM</div>
+  <h2>Technical Architecture</h2>
+  <div class="grid-2">
+    <div>
+      <div class="card" style="margin-bottom: 16px;">
+        <h3>Backend (NestJS)</h3>
+        <ul>
+          <li>15 modular API controllers</li>
+          <li>60+ RESTful API endpoints</li>
+          <li>Prisma ORM with PostgreSQL</li>
+          <li>JWT authentication + RBAC</li>
+          <li>Swagger API documentation</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Frontend (React + Electron)</h3>
+        <ul>
+          <li>9 interactive pages</li>
+          <li>Tailwind CSS design system</li>
+          <li>Zustand state management</li>
+          <li>Recharts data visualization</li>
+          <li>Offline-first architecture</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom: 16px;">
+        <h3>Database (PostgreSQL)</h3>
+        <ul>
+          <li>30+ relational tables</li>
+          <li>12 enum types</li>
+          <li>Full ACID compliance</li>
+          <li>Cloud or local deployment</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Integrations</h3>
+        <ul>
+          <li>Safaricom M-Pesa API</li>
+          <li>USB barcode scanners (HID)</li>
+          <li>Thermal receipt printers</li>
+          <li>PDF receipt generation</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">5</div>
+</div>
+
+<!-- SLIDE 6: API REFERENCE -->
+<div class="slide slide-white">
+  <div class="logo-area">POS SYSTEM</div>
+  <h2>API Endpoints — 60+ Routes</h2>
+  <table>
+    <tr><th>Module</th><th>Endpoints</th><th>Key Functions</th></tr>
+    <tr><td><strong>Auth</strong></td><td>1</td><td>JWT login with PIN verification</td></tr>
+    <tr><td><strong>Products</strong></td><td>6</td><td>CRUD, barcode scan, categories, brands</td></tr>
+    <tr><td><strong>Sales</strong></td><td>7</td><td>Create, list, receipts, refunds, daily summary</td></tr>
+    <tr><td><strong>Payments</strong></td><td>3</td><td>M-Pesa STK Push, status check, history</td></tr>
+    <tr><td><strong>Customers</strong></td><td>7</td><td>CRUD, loyalty balance, history, redeem</td></tr>
+    <tr><td><strong>Inventory</strong></td><td>5</td><td>Stock levels, low stock, adjust, transfer, damage</td></tr>
+    <tr><td><strong>Cash Management</strong></td><td>6</td><td>Open/close sessions, cash in/out, petty cash</td></tr>
+    <tr><td><strong>Reporting</strong></td><td>7</td><td>Daily summary, top products, department, KPIs</td></tr>
+    <tr><td><strong>Settings</strong></td><td>4</td><td>System config, M-Pesa credentials, terminal</td></tr>
+    <tr><td><strong>Promotions</strong></td><td>5</td><td>Discount rules, BOGO, active promotions</td></tr>
+    <tr><td><strong>Sync</strong></td><td>5</td><td>Offline sync push/pull, queue management</td></tr>
+    <tr><td><strong>Employees</strong></td><td>4</td><td>Staff management, shifts, schedules</td></tr>
+    <tr><td><strong>Suppliers</strong></td><td>6</td><td>Suppliers, purchase orders, receive goods</td></tr>
+    <tr><td><strong>Audit</strong></td><td>2</td><td>Activity logs, compliance tracking</td></tr>
+  </table>
+  <div class="page-num">6</div>
+</div>
+
+<!-- SLIDE 7: DATABASE SCHEMA -->
+<div class="slide slide-dark">
+  <div class="logo-area">POS SYSTEM</div>
+  <h2>Database Schema</h2>
+  <div class="grid-3">
+    <div class="card">
+      <h3 style="color: #4ade80;">Core</h3>
+      <ul>
+        <li>Users & Roles</li>
+        <li>Permissions</li>
+        <li>Branches</li>
+        <li>Terminals</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color: #4ade80;">Products</h3>
+      <ul>
+        <li>Products & Variants</li>
+        <li>Categories & Brands</li>
+        <li>Stock Movements</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color: #4ade80;">Transactions</h3>
+      <ul>
+        <li>Sales & Sale Items</li>
+        <li>Payments</li>
+        <li>Refunds</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color: #4ade80;">Financial</h3>
+      <ul>
+        <li>Cash Sessions</li>
+        <li>Cash Movements</li>
+        <li>Expenses</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color: #4ade80;">Operations</h3>
+      <ul>
+        <li>Inventory Levels</li>
+        <li>Suppliers</li>
+        <li>Purchase Orders</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color: #4ade80;">Analytics</h3>
+      <ul>
+        <li>Audit Logs</li>
+        <li>Loyalty Transactions</li>
+        <li>Sales Forecasts</li>
+      </ul>
+    </div>
+  </div>
+  <div style="text-align: center; margin-top: 30px;">
+    <span class="badge badge-white">30+ Tables</span>
+    <span class="badge badge-white">12 Enums</span>
+    <span class="badge badge-white">Full ACID</span>
+    <span class="badge badge-white">UUID Primary Keys</span>
+  </div>
+  <div class="page-num">7</div>
+</div>
+
+<!-- SLIDE 8: USER ROLES -->
+<div class="slide slide-white">
+  <div class="logo-area">POS SYSTEM</div>
+  <h2>User Roles & Permissions</h2>
+  <table style="font-size: 14px;">
+    <tr>
+      <th>Feature</th>
+      <th style="text-align:center">Super Admin</th>
+      <th style="text-align:center">Manager</th>
+      <th style="text-align:center">Cashier</th>
+      <th style="text-align:center">Inventory Clerk</th>
+    </tr>
+    <tr><td>Create/View Sales</td><td style="text-align:center">✓</td><td style="text-align:center">✓</td><td style="text-align:center">✓</td><td style="text-align:center">—</td></tr>
+    <tr><td>Process Refunds</td><td style="text-align:center">✓</td><td style="text-align:center">✓</td><td style="text-align:center">—</td><td style="text-align:center">—</td></tr>
+    <tr><td>Manage Products</td><td style="text-align:center">✓</td><td style="text-align:center">✓</td><td style="text-align:center">View</td><td style="text-align:center">✓</td></tr>
+    <tr><td>Inventory Adjust</td><td style="text-align:center">✓</td><td style="text-align:center">✓</td><td style="text-align:center">—</td><td style="text-align:center">✓</td></tr>
+    <tr><td>Customer Management</td><td style="text-align:center">✓</td><td style="text-align:center">✓</td><td style="text-align:center">Create</td><td style="text-align:center">—</td></tr>
+    <tr><td>View Reports</td><td style="text-align:center">✓</td><td style="text-align:center">✓</td><td style="text-align:center">—</td><td style="text-align:center">—</td></tr>
+    <tr><td>Cash Sessions</td><td style="text-align:center">✓</td><td style="text-align:center">✓</td><td style="text-align:center">Open</td><td style="text-align:center">—</td></tr>
+    <tr><td>User Management</td><td style="text-align:center">✓</td><td style="text-align:center">—</td><td style="text-align:center">—</td><td style="text-align:center">—</td></tr>
+  </table>
+  <div style="margin-top: 24px;">
+    <p><strong>Security:</strong> JWT token authentication, PIN-based login, full audit trail on every action</p>
+  </div>
+  <div class="page-num">8</div>
+</div>
+
+<!-- SLIDE 9: M-PESA INTEGRATION -->
+<div class="slide slide-green">
+  <div class="logo-area">POS SYSTEM</div>
+  <h2>M-Pesa Integration</h2>
+  <div class="grid-2">
+    <div>
+      <h3>How STK Push Works</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <strong>1. Cashier selects M-Pesa</strong>
+          <p style="font-size: 14px;">Payment method at checkout</p>
+        </div>
+        <div class="timeline-item">
+          <strong>2. Customer enters phone number</strong>
+          <p style="font-size: 14px;">Safaricom registered number</p>
+        </div>
+        <div class="timeline-item">
+          <strong>3. STK Push sent</strong>
+          <p style="font-size: 14px;">Prompt appears on customer's phone</p>
+        </div>
+        <div class="timeline-item">
+          <strong>4. Customer enters M-Pesa PIN</strong>
+          <p style="font-size: 14px;">Confirms payment on their device</p>
+        </div>
+        <div class="timeline-item">
+          <strong>5. Callback received</strong>
+          <p style="font-size: 14px;">System confirms payment instantly</p>
+        </div>
+        <div class="timeline-item">
+          <strong>6. Receipt generated</strong>
+          <p style="font-size: 14px;">Sale completed, stock updated</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom: 16px;">
+        <h3>Why M-Pesa Matters</h3>
+        <ul>
+          <li>73% of Kenya's GDP flows through M-Pesa</li>
+          <li>33+ million active users in Kenya</li>
+          <li>Average supermarket: 35% M-Pesa payments</li>
+          <li>Zero cash handling risk for large amounts</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Technical Details</h3>
+        <ul>
+          <li>Lipa Na M-Pesa API integration</li>
+          <li>Idempotent callback handling</li>
+          <li>Automatic retry on timeout</li>
+          <li>Transaction ID verification</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">9</div>
+</div>
+
+<!-- SLIDE 10: COMPETITIVE ADVANTAGE -->
+<div class="slide slide-white">
+  <div class="logo-area">POS SYSTEM</div>
+  <h2>Why Choose Us</h2>
+  <div class="grid-3">
+    <div class="card" style="border-color: #16a34a; border-width: 2px;">
+      <div style="font-size: 32px; margin-bottom: 10px;">🏠</div>
+      <h3 style="color: #166534;">Local-First</h3>
+      <p>Built for Kenya from day one. KES, VAT 16%, KRA compliant, M-Pesa native</p>
+    </div>
+    <div class="card" style="border-color: #16a34a; border-width: 2px;">
+      <div style="font-size: 32px; margin-bottom: 10px;">📴</div>
+      <h3 style="color: #166534;">Offline-Capable</h3>
+      <p>Works without internet. Syncs when connected. Never loses a sale.</p>
+    </div>
+    <div class="card" style="border-color: #16a34a; border-width: 2px;">
+      <div style="font-size: 32px; margin-bottom: 10px;">💸</div>
+      <h3 style="color: #166534;">Affordable</h3>
+      <p>Fraction of the cost of SAP, Oracle Retail, or imported POS systems</p>
+    </div>
+  </div>
+  <div style="margin-top: 30px;">
+    <table>
+      <tr><th>Feature</th><th>Our POS</th><th>Imported Solutions</th><th>Manual/Paper</th></tr>
+      <tr><td>M-Pesa Integration</td><td style="color: #16a34a; font-weight: bold;">Native ✓</td><td>Add-on ($$$)</td><td>❌</td></tr>
+      <tr><td>Offline Mode</td><td style="color: #16a34a; font-weight: bold;">Built-in ✓</td><td>❌</td><td>✓</td></tr>
+      <tr><td>KRA Compliance</td><td style="color: #16a34a; font-weight: bold;">Built-in ✓</td><td>Extra config</td><td>❌</td></tr>
+      <tr><td>Barcode Scanner</td><td style="color: #16a34a; font-weight: bold;">✓</td><td>✓</td><td>❌</td></tr>
+      <tr><td>Real-Time Reports</td><td style="color: #16a34a; font-weight: bold;">✓</td><td>✓</td><td>❌</td></tr>
+      <tr><td>Customizable</td><td style="color: #16a34a; font-weight: bold;">Full access ✓</td><td>Limited</td><td>❌</td></tr>
+    </table>
+  </div>
+  <div class="page-num">10</div>
+</div>
+
+<!-- SLIDE 11: MARKET OPPORTUNITY -->
+<div class="slide slide-dark">
+  <div class="logo-area">POS SYSTEM</div>
+  <h2>Market Opportunity</h2>
+  <div class="grid-4">
+    <div class="stat">
+      <div class="number">12,000+</div>
+      <div class="label">Supermarkets in Kenya</div>
+    </div>
+    <div class="stat">
+      <div class="number">KES 2.5T</div>
+      <div class="label">Annual Retail Market</div>
+    </div>
+    <div class="stat">
+      <div class="number">73%</div>
+      <div class="label">Payments via M-Pesa</div>
+    </div>
+    <div class="stat">
+      <div class="number">40%</div>
+      <div class="label">Still Using Manual Systems</div>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-top: 40px;">
+    <div class="card">
+      <h3 style="color: #4ade80;">Target Customers</h3>
+      <ul>
+        <li>Supermarket chains (Naivas, Carrefour, Quickmart)</li>
+        <li>Independent supermarkets</li>
+        <li>Wholesale/retail hybrid stores</li>
+        <li>Chain pharmacies</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color: #4ade80;">Expansion Plan</h3>
+      <ul>
+        <li>Phase 1: Kenya (Nairobi + major towns)</li>
+        <li>Phase 2: Uganda, Tanzania, Rwanda</li>
+        <li>Phase 3: West Africa (Nigeria, Ghana)</li>
+        <li>SaaS model for recurring revenue</li>
+      </ul>
+    </div>
+  </div>
+  <div class="page-num">11</div>
+</div>
+
+<!-- SLIDE 12: CLOSING -->
+<div class="slide slide-accent">
+  <div class="logo-area">POS SYSTEM</div>
+  <div style="text-align: center; max-width: 700px; margin: 0 auto;">
+    <div style="font-size: 64px; margin-bottom: 20px;">🚀</div>
+    <h1 style="font-size: 44px; margin-bottom: 16px;">Ready to Transform<br>Your Supermarket?</h1>
+    <p style="font-size: 20px; color: rgba(255,255,255,0.85); margin-bottom: 30px;">
+      Start processing sales in minutes, not months.<br>
+      One system. Every payment. Complete visibility.
+    </p>
+    <div style="display: flex; justify-content: center; gap: 20px; margin-top: 40px;">
+      <div class="card" style="background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); color: white; min-width: 200px;">
+        <p style="color: white; font-size: 14px;">GitHub</p>
+        <p style="color: white; font-weight: 600; font-size: 14px;">github.com/joshkirui/supermarket-pos</p>
+      </div>
+      <div class="card" style="background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); color: white; min-width: 200px;">
+        <p style="color: white; font-size: 14px;">Documentation</p>
+        <p style="color: white; font-weight: 600; font-size: 14px;">POS_System_User_Guide.pdf</p>
+      </div>
+    </div>
+  </div>
+  <div class="page-num" style="color: rgba(255,255,255,0.5);">12</div>
+</div>
+
+</body>
+</html>
