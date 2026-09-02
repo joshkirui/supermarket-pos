@@ -1,14 +1,21 @@
 import { useEffect, useState } from 'react'
-import { Search, AlertTriangle, ArrowLeftRight } from 'lucide-react'
-import { inventoryApi } from '../services/api'
+import { Search, AlertTriangle, ArrowLeftRight, Plus, Minus, X } from 'lucide-react'
+import { inventoryApi, productsApi } from '../services/api'
+import toast from 'react-hot-toast'
 
 export default function InventoryPage() {
   const [items, setItems] = useState<any[]>([])
+  const [products, setProducts] = useState<any[]>([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<'stock' | 'low'>('stock')
+  const [showAdjust, setShowAdjust] = useState(false)
+  const [showTransfer, setShowTransfer] = useState(false)
 
   useEffect(() => { loadInventory() }, [])
+  useEffect(() => {
+    productsApi.list({ limit: 100 }).then((r) => setProducts(r.data.data || r.data || [])).catch(() => {})
+  }, [])
 
   const loadInventory = async () => {
     try {
@@ -48,7 +55,10 @@ export default function InventoryPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search inventory..." className="w-full pl-10" />
         </div>
-        <button className="btn-secondary flex items-center gap-2">
+        <button onClick={() => setShowAdjust(true)} className="btn-primary flex items-center gap-2">
+          <Plus className="w-4 h-4" />Adjust Stock
+        </button>
+        <button onClick={() => setShowTransfer(true)} className="btn-secondary flex items-center gap-2">
           <ArrowLeftRight className="w-4 h-4" />Transfer
         </button>
       </div>
@@ -90,6 +100,151 @@ export default function InventoryPage() {
           </tbody>
         </table>
       </div>
-    </div>
+
+      {showAdjust && <AdjustStockModal products={products} onClose={() => setShowAdjust(false)} onSaved={() => { setShowAdjust(false); loadInventory() }} />}
+      {showTransfer && <TransferModal products={products} onClose={() => setShowTransfer(false)} onSaved={() => { setShowTransfer(false); loadInventory() }} />}
+    </>
+  )
+}
+
+function AdjustStockModal({ products, onClose, onSaved }: { products: any[]; onClose: () => void; onSaved: () => void }) {
+  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({ variantId: '', type: 'RESTOCK', quantity: '', reason: '' })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!form.variantId || !form.quantity) return toast.error('Select product and quantity')
+    setLoading(true)
+    try {
+      await inventoryApi.adjust({
+        variantId: form.variantId,
+        type: form.type,
+        quantity: Number(form.quantity),
+        reason: form.reason || 'Manual adjustment',
+      })
+      toast.success('Stock adjusted!')
+      onSaved()
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed to adjust stock')
+    } finally { setLoading(false) }
+  }
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black/30 z-40" onClick={onClose} />
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
+          <div className="flex items-center justify-between p-4 border-b border-slate-200">
+            <h2 className="text-lg font-semibold text-slate-900">Adjust Stock</h2>
+            <button onClick={onClose} className="p-1 hover:bg-slate-100 rounded"><X className="w-5 h-5 text-slate-500" /></button>
+          </div>
+          <form onSubmit={handleSubmit} className="p-4 space-y-4">
+            <div>
+              <label className="block text-xs text-slate-500 mb-1">Product</label>
+              <select value={form.variantId} onChange={(e) => setForm({ ...form, variantId: e.target.value })} className="w-full">
+                <option value="">Select product...</option>
+                {products.map((p) => p.variants?.map((v: any) => (
+                  <option key={v.id} value={v.id}>{p.name} ({v.sku || v.barcode})</option>
+                )))}
+              </select>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">Type</label>
+                <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="w-full">
+                  <option value="RESTOCK">Restock</option>
+                  <option value="ADJUSTMENT">Adjustment</option>
+                  <option value="DAMAGE">Damage</option>
+                  <option value="RETURN">Return</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">Quantity</label>
+                <input type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} placeholder="10" className="w-full" min="1" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs text-slate-500 mb-1">Reason</label>
+              <input value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} placeholder="Supplier delivery, count correction..." className="w-full" />
+            </div>
+            <div className="flex gap-3 justify-end pt-2">
+              <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
+              <button type="submit" disabled={loading} className="btn-primary">{loading ? 'Saving...' : 'Adjust'}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </>
+  )
+}
+
+function TransferModal({ products, onClose, onSaved }: { products: any[]; onClose: () => void; onSaved: () => void }) {
+  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({ variantId: '', quantity: '', fromTerminal: 'terminal-1', toTerminal: 'terminal-2', reason: '' })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!form.variantId || !form.quantity) return toast.error('Select product and quantity')
+    setLoading(true)
+    try {
+      await inventoryApi.transfer({
+        variantId: form.variantId,
+        quantity: Number(form.quantity),
+        fromTerminalId: form.fromTerminal,
+        toTerminalId: form.toTerminal,
+        reason: form.reason || 'Transfer',
+      })
+      toast.success('Stock transferred!')
+      onSaved()
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed to transfer stock')
+    } finally { setLoading(false) }
+  }
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black/30 z-40" onClick={onClose} />
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
+          <div className="flex items-center justify-between p-4 border-b border-slate-200">
+            <h2 className="text-lg font-semibold text-slate-900">Transfer Stock</h2>
+            <button onClick={onClose} className="p-1 hover:bg-slate-100 rounded"><X className="w-5 h-5 text-slate-500" /></button>
+          </div>
+          <form onSubmit={handleSubmit} className="p-4 space-y-4">
+            <div>
+              <label className="block text-xs text-slate-500 mb-1">Product</label>
+              <select value={form.variantId} onChange={(e) => setForm({ ...form, variantId: e.target.value })} className="w-full">
+                <option value="">Select product...</option>
+                {products.map((p) => p.variants?.map((v: any) => (
+                  <option key={v.id} value={v.id}>{p.name} ({v.sku || v.barcode})</option>
+                )))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-slate-500 mb-1">Quantity</label>
+              <input type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} placeholder="10" className="w-full" min="1" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">From Terminal</label>
+                <input value={form.fromTerminal} onChange={(e) => setForm({ ...form, fromTerminal: e.target.value })} className="w-full" />
+              </div>
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">To Terminal</label>
+                <input value={form.toTerminal} onChange={(e) => setForm({ ...form, toTerminal: e.target.value })} className="w-full" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs text-slate-500 mb-1">Reason</label>
+              <input value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} placeholder="Inter-branch transfer..." className="w-full" />
+            </div>
+            <div className="flex gap-3 justify-end pt-2">
+              <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
+              <button type="submit" disabled={loading} className="btn-primary">{loading ? 'Saving...' : 'Transfer'}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </>
   )
 }

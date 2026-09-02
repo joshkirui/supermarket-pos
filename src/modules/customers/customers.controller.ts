@@ -18,8 +18,8 @@ export class CustomersController {
 
   @Get()
   @RequirePermissions('customer.view')
-  findAll(@Query('page') page?: number, @Query('limit') limit?: number) {
-    return this.customersService.findAll(page, limit);
+  findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
+    return this.customersService.findAll(page ? parseInt(page, 10) : 1, limit ? parseInt(limit, 10) : 20);
   }
 
   @Get('phone/:phone')
