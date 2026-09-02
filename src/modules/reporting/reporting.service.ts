@@ -60,6 +60,63 @@ export class ReportingService {
     });
   }
 
+  async getDepartmentReport(period: string, branchId?: string) {
+    const days = period === 'week' ? 7 : period === 'month' ? 30 : period === 'year' ? 365 : 7;
+    const since = new Date();
+    since.setDate(since.getDate() - days);
+
+    const categories = await this.prisma.category.findMany({
+      include: {
+        products: {
+          include: {
+            variants: {
+              include: {
+                saleItems: {
+                  where: { sale: { createdAt: { gte: since }, paymentStatus: 'SUCCESS' } },
+                  include: { sale: true },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { name: 'asc' },
+    });
+
+    return categories.map((cat) => {
+      const products = cat.products.map((prod) => {
+        const allSaleItems = prod.variants.flatMap((v) => v.saleItems);
+        const totalQty = allSaleItems.reduce((s, i) => s + Number(i.quantity), 0);
+        const totalRevenue = allSaleItems.reduce((s, i) => s + Number(i.lineTotal), 0);
+        const totalCost = prod.variants.reduce((s, v) => s + Number(v.costPrice) * (v.saleItems.reduce((si, i) => si + Number(i.quantity), 0)), 0);
+        return {
+          id: prod.id,
+          name: prod.name,
+          sku: prod.sku,
+          unitsSold: totalQty,
+          revenue: totalRevenue,
+          cost: totalCost,
+          profit: totalRevenue - totalCost,
+          currentStock: prod.variants.reduce((s, v) => s + v.stockQuantity, 0),
+        };
+      });
+
+      const deptRevenue = products.reduce((s, p) => s + p.revenue, 0);
+      const deptCost = products.reduce((s, p) => s + p.cost, 0);
+      const deptQty = products.reduce((s, p) => s + p.unitsSold, 0);
+
+      return {
+        department: cat.name,
+        totalRevenue: deptRevenue,
+        totalCost: deptCost,
+        totalProfit: deptRevenue - deptCost,
+        totalUnitsSold: deptQty,
+        productCount: products.length,
+        products: products.filter((p) => p.unitsSold > 0).sort((a, b) => b.revenue - a.revenue),
+      };
+    }).filter((d) => d.productCount > 0);
+  }
+
   async getCashReconciliation(date: string, branchId?: string) {
     const start = new Date(date);
     const end = new Date(date);

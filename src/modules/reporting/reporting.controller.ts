@@ -37,6 +37,15 @@ export class ReportingController {
     return this.reportingService.getTopProducts(period, limit);
   }
 
+  @Get('reports/department')
+  @RequirePermissions('report.view_sales')
+  getDepartmentReport(
+    @Query('period') period: string,
+    @CurrentUser('branchId') branchId: string,
+  ) {
+    return this.reportingService.getDepartmentReport(period || 'week', branchId);
+  }
+
   @Get('reports/cash-reconciliation')
   @RequirePermissions('report.view_sales')
   getCashReconciliation(

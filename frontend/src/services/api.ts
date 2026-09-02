@@ -109,6 +109,7 @@ export const reportsApi = {
   dailySummary: (params?: any) => api.get('/reports/daily-summary', { params }),
   topProducts: (params?: any) => api.get('/reports/top-products', { params }),
   cashReconciliation: (params?: any) => api.get('/reports/cash-reconciliation', { params }),
+  departmentReport: (params?: any) => api.get('/reports/department', { params }),
 }
 
 export const dashboardApi = {
