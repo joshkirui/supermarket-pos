@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #16a34a;
+  --primary-dark: #166534;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --surface: #f1f5f9;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --muted: #64748b;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+*::-webkit-scrollbar { width: 6px; }
+*::-webkit-scrollbar-track { background: #f1f5f9; }
+*::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 3px; }
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+input, select, textarea {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.1);
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-forest-600 hover:bg-forest-700 text-white font-medium px-4 py-2 rounded-lg transition-all duration-150 active:scale-95;
+  }
+  .btn-secondary {
+    @apply bg-white hover:bg-slate-50 text-slate-700 font-medium px-4 py-2 rounded-lg border border-slate-200 transition-all duration-150;
+  }
+  .btn-danger {
+    @apply bg-red-50 hover:bg-red-100 text-red-600 font-medium px-4 py-2 rounded-lg border border-red-200 transition-all duration-150;
+  }
+  .btn-success {
+    @apply bg-green-50 hover:bg-green-100 text-green-700 font-medium px-4 py-2 rounded-lg border border-green-200 transition-all duration-150;
+  }
+  .card {
+    @apply bg-white border border-slate-200 rounded-xl p-4;
+  }
+  .stat-card {
+    @apply bg-white border border-slate-200 rounded-xl p-5 hover:border-forest-400 transition-colors;
+  }
+}
