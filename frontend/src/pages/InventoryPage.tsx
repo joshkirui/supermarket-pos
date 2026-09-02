@@ -103,7 +103,7 @@ export default function InventoryPage() {
 
       {showAdjust && <AdjustStockModal products={products} onClose={() => setShowAdjust(false)} onSaved={() => { setShowAdjust(false); loadInventory() }} />}
       {showTransfer && <TransferModal products={products} onClose={() => setShowTransfer(false)} onSaved={() => { setShowTransfer(false); loadInventory() }} />}
-    </>
+    </div>
   )
 }
 

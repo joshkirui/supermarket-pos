@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>POS System — Complete User Guide</title>
+<style>
+  @page { size: A4; margin: 20mm; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #1e293b; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 40px; }
+  h1 { color: #166534; font-size: 28px; border-bottom: 3px solid #16a34a; padding-bottom: 10px; margin-top: 40px; page-break-before: always; }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #166534; font-size: 20px; margin-top: 30px; border-left: 4px solid #16a34a; padding-left: 12px; }
+  h3 { color: #334155; font-size: 16px; margin-top: 20px; }
+  table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; }
+  th { background: #166534; color: white; padding: 10px 12px; text-align: left; }
+  td { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; }
+  tr:nth-child(even) { background: #f8fafc; }
+  code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 13px; color: #166534; }
+  .step { background: #f0fdf4; border-left: 4px solid #16a34a; padding: 12px 16px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+  .warning { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+  .info { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+  .cover { text-align: center; padding: 80px 0; }
+  .cover h1 { border: none; font-size: 36px; page-break-before: avoid; }
+  .cover p { font-size: 18px; color: #64748b; }
+  ul { padding-left: 24px; }
+  li { margin: 4px 0; }
+  .toc a { color: #166534; text-decoration: none; }
+  .toc li { margin: 6px 0; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .badge-amber { background: #fef3c7; color: #92400e; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
+  .kbd { background: #1e293b; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-family: monospace; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1 style="font-size:36px;color:#166534;">POS SYSTEM</h1>
+  <p style="font-size:24px;color:#166534;margin-top:-10px;">Kenyan Supermarket</p>
+  <p style="margin-top:30px;">Complete Setup & User Guide</p>
+  <p style="color:#94a3b8;margin-top:40px;">Version 1.0 — September 2026</p>
+  <p style="color:#94a3b8;">NestJS + React + Electron + PostgreSQL</p>
+</div>
+
+<h1 style="page-break-before:always;">Table of Contents</h1>
+<ol class="toc" style="font-size:15px;">
+  <li><a href="#system">System Requirements</a></li>
+  <li><a href="#install">Installation & Setup</a></li>
+  <li><a href="#database">Database Configuration</a></li>
+  <li><a href="#accounts">User Accounts & Login</a></li>
+  <li><a href="#dashboard">Dashboard</a></li>
+  <li><a href="#pos">POS Terminal (Barcode Scanning)</a></li>
+  <li><a href="#products">Products Management</a></li>
+  <li><a href="#inventory">Inventory Management</a></li>
+  <li><a href="#sales">Sales & History</a></li>
+  <li><a href="#customers">Customers & Loyalty</a></li>
+  <li><a href="#cash">Cash Management</a></li>
+  <li><a href="#reports">Reports & Analytics</a></li>
+  <li><a href="#settings">Settings & Configuration</a></li>
+  <li><a href="#mpesa">M-Pesa Integration</a></li>
+  <li><a href="#barcode">Barcode Scanner Setup</a></li>
+  <li><a href="#troubleshooting">Troubleshooting</a></li>
+  <li><a href="#api">API Reference</a></li>
+</ol>
+
+<h1 id="system">1. System Requirements</h1>
+
+<table>
+  <tr><th>Component</th><th>Requirement</th></tr>
+  <tr><td>Operating System</td><td>Windows 10/11, macOS, or Linux</td></tr>
+  <tr><td>Node.js</td><td>Version 18 or higher</td></tr>
+  <tr><td>PostgreSQL</td><td>Version 14 or higher (cloud or local)</td></tr>
+  <tr><td>RAM</td><td>Minimum 4 GB (8 GB recommended)</td></tr>
+  <tr><td>Display</td><td>1280×720 minimum (1920×1080 recommended)</td></tr>
+  <tr><td>Barcode Scanner</td><td>Any USB HID barcode scanner (keyboard-wedge type)</td></tr>
+  <tr><td>Receipt Printer</td><td>Optional — 80mm thermal printer</td></tr>
+  <tr><td>Internet</td><td>Required for M-Pesa payments, optional for offline use</td></tr>
+</table>
+
+<h1 id="install">2. Installation & Setup</h1>
+
+<h2>2.1 Clone the Repository</h2>
+<div class="step">
+  <code>git clone https://github.com/joshkirui/supermarket-pos.git</code><br>
+  <code>cd supermarket-pos</code>
+</div>
+
+<h2>2.2 Install Backend Dependencies</h2>
+<div class="step">
+  <code>npm install</code>
+</div>
+
+<h2>2.3 Install Frontend Dependencies</h2>
+<div class="step">
+  <code>cd frontend</code><br>
+  <code>npm install</code><br>
+  <code>cd ..</code>
+</div>
+
+<h2>2.4 Build the Backend</h2>
+<div class="step">
+  <code>npx nest build</code>
+</div>
+
+<h2>2.5 Start the System</h2>
+<p>Open <strong>two terminals</strong> in the project folder:</p>
+
+<table>
+  <tr><th>Terminal</th><th>Command</th><th>What It Does</th></tr>
+  <tr><td>Backend</td><td><code>node dist/main.js</code></td><td>Starts API server on port 3001</td></tr>
+  <tr><td>Frontend</td><td><code>cd frontend && npx vite --host</code></td><td>Starts React app on port 5173</td></tr>
+</table>
+
+<div class="info">
+  <strong>Tip:</strong> If PowerShell blocks scripts, run this first:<br>
+  <code>Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass</code>
+</div>
+
+<p>Open your browser to <strong>http://localhost:5173</strong></p>
+
+<h1 id="database">3. Database Configuration</h1>
+
+<h2>3.1 PostgreSQL Setup</h2>
+<p>Edit the <code>.env</code> file in the project root:</p>
+<div class="step">
+  <code>DATABASE_URL="postgresql://username:password@localhost:5432/pos_db"</code><br>
+  <code>JWT_SECRET="your-secret-key-here"</code><br>
+  <code>PORT=3001</code>
+</div>
+
+<h2>3.2 Run Migrations</h2>
+<div class="step">
+  <code>npx prisma migrate deploy</code>
+</div>
+
+<h2>3.3 Seed the Database</h2>
+<div class="step">
+  <code>node prisma/seed.js</code>
+</div>
+<p>This creates: permissions, roles, admin user, 12 products, payment methods, and categories.</p>
+
+<h2>3.4 Create Supermarket Accounts</h2>
+<div class="step">
+  <code>node create-accounts.js</code>
+</div>
+<p>This creates all user accounts and sample customers listed in Section 4.</p>
+
+<h1 id="accounts">4. User Accounts & Login</h1>
+
+<h2>4.1 Default Accounts</h2>
+<table>
+  <tr><th>Username</th><th>PIN</th><th>Full Name</th><th>Role</th></tr>
+  <tr><td><code>admin</code></td><td><code>1234</code></td><td>Joshua Kirui</td><td><span class="badge badge-green">Super Admin</span></td></tr>
+  <tr><td><code>manager</code></td><td><code>5678</code></td><td>Faith Wanjiku</td><td><span class="badge badge-blue">Branch Manager</span></td></tr>
+  <tr><td><code>cashier</code></td><td><code>1111</code></td><td>Daniel Ochieng</td><td><span class="badge badge-amber">Cashier</span></td></tr>
+  <tr><td><code>cashier2</code></td><td><code>2222</code></td><td>Grace Muthoni</td><td><span class="badge badge-amber">Cashier</span></td></tr>
+  <tr><td><code>inventory</code></td><td><code>3333</code></td><td>Peter Kamau</td><td><span class="badge badge-blue">Inventory Clerk</span></td></tr>
+</table>
+
+<h2>4.2 Role Permissions</h2>
+<table>
+  <tr><th>Permission</th><th>Super Admin</th><th>Manager</th><th>Cashier</th><th>Inventory</th></tr>
+  <tr><td>Create/View Sales</td><td>Yes</td><td>Yes</td><td>Yes</td><td>No</td></tr>
+  <tr><td>Refunds</td><td>Yes</td><td>Yes</td><td>No</td><td>No</td></tr>
+  <tr><td>Process Payments</td><td>Yes</td><td>Yes</td><td>Yes</td><td>No</td></tr>
+  <tr><td>View/Manage Products</td><td>Yes</td><td>Yes</td><td>View only</td><td>Yes</td></tr>
+  <tr><td>Inventory Adjust/Transfer</td><td>Yes</td><td>Yes</td><td>No</td><td>Yes</td></tr>
+  <tr><td>Customer Management</td><td>Yes</td><td>Yes</td><td>Create/View</td><td>No</td></tr>
+  <tr><td>View Reports</td><td>Yes</td><td>Yes</td><td>No</td><td>No</td></tr>
+  <tr><td>Cash Session</td><td>Yes</td><td>Yes</td><td>Open/View</td><td>No</td></tr>
+  <tr><td>User Management</td><td>Yes</td><td>No</td><td>No</td><td>No</td></tr>
+</table>
+
+<h2>4.3 Logging In</h2>
+<ol>
+  <li>Open <strong>http://localhost:5173</strong></li>
+  <li>Enter your <strong>username</strong> and <strong>4-digit PIN</strong></li>
+  <li>Click <strong>Login</strong></li>
+  <li>You will be redirected to the Dashboard</li>
+</ol>
+
+<div class="warning">
+  <strong>Security:</strong> After 3 failed login attempts, the account may be locked. Contact the admin to reset.
+</div>
+
+<h1 id="dashboard">5. Dashboard</h1>
+<p>The Dashboard shows real-time business metrics:</p>
+
+<h2>Key Performance Indicators (KPIs)</h2>
+<ul>
+  <li><strong>Today's Sales</strong> — Total revenue for today in KES</li>
+  <li><strong>Transactions</strong> — Number of sales completed today</li>
+  <li><strong>Average Sale</strong> — Average transaction value</li>
+  <li><strong>Low Stock Items</strong> — Products below reorder level</li>
+</ul>
+
+<h2>Charts</h2>
+<ul>
+  <li><strong>Weekly Sales</strong> — Bar chart showing daily sales for the week</li>
+  <li><strong>Recent Sales</strong> — List of the latest transactions</li>
+</ul>
+
+<h1 id="pos">6. POS Terminal (Barcode Scanning)</h1>
+<p>This is the main screen for processing sales. Navigate to <strong>Sales → POS Terminal</strong>.</p>
+
+<h2>6.1 Scanning Items</h2>
+<ol>
+  <li>The <strong>barcode input</strong> is always focused — no need to click it</li>
+  <li>Point your barcode scanner at a product barcode</li>
+  <li>The scanner types the barcode number and presses Enter automatically</li>
+  <li>The product appears in the cart table below</li>
+  <li>Product name, SKU, price, and quantity are shown</li>
+</ol>
+
+<h2>6.2 Manual Entry</h2>
+<ol>
+  <li>Click the barcode input field</li>
+  <li>Type the barcode number manually</li>
+  <li>Press <span class="kbd">Enter</span></li>
+</ol>
+
+<h2>6.3 Adjusting Quantities</h2>
+<ul>
+  <li>Click <strong>+</strong> to increase quantity</li>
+  <li>Click <strong>−</strong> to decrease quantity</li>
+  <li>Click the <strong>trash icon</strong> to remove an item</li>
+</ul>
+
+<h2>6.4 Completing a Sale</h2>
+<ol>
+  <li>Check the <strong>Order Summary</strong> panel on the right</li>
+  <li>Verify Items count, Subtotal, VAT (16%), and Total</li>
+  <li>Click <strong>Complete Sale</strong></li>
+  <li>Select payment method (Cash / M-Pesa / Card)</li>
+  <li>Confirm payment</li>
+  <li>Receipt is generated and saved</li>
+</ol>
+
+<div class="info">
+  <strong>VAT:</strong> All prices include 16% VAT as required by Kenya Revenue Authority (KRA).
+</div>
+
+<h1 id="products">7. Products Management</h1>
+<p>Navigate to <strong>Products</strong> in the sidebar.</p>
+
+<h2>7.1 View Products</h2>
+<ul>
+  <li>Products displayed as cards with name, SKU, category, price, and stock level</li>
+  <li>Use the <strong>search bar</strong> to filter by name, SKU, or barcode</li>
+  <li><strong>Click any product</strong> to add it to the current cart</li>
+</ul>
+
+<h2>7.2 Add a New Product</h2>
+<ol>
+  <li>Click <strong>Add Product</strong> button (top right)</li>
+  <li>Fill in the form:
+    <ul>
+      <li><strong>SKU *</strong> — Unique stock keeping unit code (e.g., <code>MILK-003</code>)</li>
+      <li><strong>Product Name *</strong> — Full product name (e.g., <code>Fresh Milk 1L</code>)</li>
+      <li><strong>Barcode</strong> — EAN-13 barcode number</li>
+      <li><strong>Selling Price</strong> — Price in KES</li>
+      <li><strong>Cost Price</strong> — Your purchase cost in KES</li>
+      <li><strong>Initial Stock</strong> — Starting quantity</li>
+      <li><strong>Reorder Level</strong> — Minimum stock before alert (default: 10)</li>
+    </ul>
+  </li>
+  <li>Click <strong>Add Product</strong></li>
+</ol>
+
+<h2>7.3 Product Categories</h2>
+<table>
+  <tr><th>Category</th><th>Example Products</th></tr>
+  <tr><td>Dairy & Eggs</td><td>Milk, Eggs, Yogurt</td></tr>
+  <tr><td>Beverages</td><td>Water, Soda, Juice</td></tr>
+  <tr><td>Snacks</td><td>Chips, Biscuits, Nuts</td></tr>
+  <tr><td>Household</td><td>Rice, Sugar, Cooking Oil</td></tr>
+  <tr><td>Personal Care</td><td>Soap, Tissues, Shampoo</td></tr>
+  <tr><td>Bakery</td><td>Bread, Cakes</td></tr>
+</table>
+
+<h1 id="inventory">8. Inventory Management</h1>
+<p>Navigate to <strong>Inventory</strong> in the sidebar.</p>
+
+<h2>8.1 View Stock Levels</h2>
+<ul>
+  <li><strong>All Stock</strong> tab — shows all products with current stock levels</li>
+  <li><strong>Low Stock</strong> tab — shows only products below reorder level (amber alerts)</li>
+  <li>Search by product name or SKU</li>
+</ul>
+
+<h2>8.2 Adjust Stock</h2>
+<ol>
+  <li>Click <strong>Adjust Stock</strong> button</li>
+  <li>Select the product from the dropdown</li>
+  <li>Choose adjustment type:
+    <ul>
+      <li><strong>Restock</strong> — New delivery from supplier</li>
+      <li><strong>Adjustment</strong> — Stock count correction</li>
+      <li><strong>Damage</strong> — Damaged/expired items</li>
+      <li><strong>Return</strong> — Customer returns</li>
+    </ul>
+  </li>
+  <li>Enter the quantity</li>
+  <li>Add a reason (e.g., "Supplier delivery - invoice #1234")</li>
+  <li>Click <strong>Adjust</strong></li>
+</ol>
+
+<h2>8.3 Transfer Stock</h2>
+<ol>
+  <li>Click <strong>Transfer</strong> button</li>
+  <li>Select the product</li>
+  <li>Enter the quantity to transfer</li>
+  <li>Set the <strong>From Terminal</strong> and <strong>To Terminal</strong> IDs</li>
+  <li>Add a reason (e.g., "Inter-branch transfer")</li>
+  <li>Click <strong>Transfer</strong></li>
+</ol>
+
+<h1 id="sales">9. Sales & History</h1>
+<p>Navigate to <strong>Sales</strong> in the sidebar. Two tabs:</p>
+
+<h2>9.1 POS Terminal</h2>
+<p>See Section 6 above for full barcode scanning workflow.</p>
+
+<h2>9.2 Sales History</h2>
+<ul>
+  <li>View all completed transactions</li>
+  <li>Search by sale number (e.g., <code>SL-20260902-001</code>)</li>
+  <li>See sale date, cashier, payment method, and total</li>
+  <li>Click a sale to view details or print receipt</li>
+</ul>
+
+<h1 id="customers">10. Customers & Loyalty</h1>
+<p>Navigate to <strong>Customers</strong> in the sidebar.</p>
+
+<h2>10.1 View Customers</h2>
+<ul>
+  <li>Table shows Name, Phone, Email, and Loyalty Points</li>
+  <li>Search by name, phone, or email</li>
+</ul>
+
+<h2>10.2 Add a Customer</h2>
+<ol>
+  <li>Click <strong>Add Customer</strong></li>
+  <li>Enter Phone Number (required — used as unique ID)</li>
+  <li>Enter Name and Email (optional)</li>
+  <li>Customer is saved and can earn loyalty points on future purchases</li>
+</ol>
+
+<h2>10.3 Loyalty Program</h2>
+<ul>
+  <li>Customers earn <strong>1 point per KES 1</strong> spent (configurable)</li>
+  <li>Points are auto-calculated on each sale</li>
+  <li>Tier upgrades: <span class="badge badge-amber">Bronze</span> → <span class="badge badge-blue">Silver</span> (KES 10,000+) → <span class="badge badge-green">Gold</span> (KES 50,000+)</li>
+  <li>Points can be redeemed at checkout to discount the total</li>
+</ul>
+
+<h1 id="cash">11. Cash Management</h1>
+<p>Navigate to <strong>Cash</strong> in the sidebar.</p>
+
+<h2>11.1 Cash Session</h2>
+<ol>
+  <li><strong>Open Session</strong> — Enter the opening float amount (e.g., KES 10,000) and start your shift</li>
+  <li><strong>Cash In</strong> — Record money added to the register (e.g., float top-up)</li>
+  <li><strong>Cash Out</strong> — Record money removed (e.g., bank deposit)</li>
+</ol>
+
+<h2>11.2 Expenses</h2>
+<ol>
+  <li>Switch to <strong>Expenses</strong> tab</li>
+  <li>Select category: Utilities / Supplies / Maintenance / Other</li>
+  <li>Enter amount and description</li>
+  <li>Click <strong>Record Expense</strong></li>
+</ol>
+
+<h1 id="reports">12. Reports & Analytics</h1>
+<p>Navigate to <strong>Reports</strong> in the sidebar.</p>
+
+<h2>12.1 Summary Cards</h2>
+<ul>
+  <li><strong>Total Sales (Week)</strong> — Weekly revenue with % change from last week</li>
+  <li><strong>Total Expenses</strong> — Weekly expenses as % of sales</li>
+  <li><strong>Net Profit</strong> — Revenue minus expenses with margin %</li>
+</ul>
+
+<h2>12.2 Charts</h2>
+<ul>
+  <li><strong>Sales vs Expenses</strong> — Daily comparison bar chart</li>
+  <li><strong>Payment Methods</strong> — Pie chart showing Cash/M-Pesa/Card split</li>
+</ul>
+
+<h2>12.3 Top Products</h2>
+<p>Table showing best-selling products by units sold and revenue.</p>
+
+<h1 id="settings">13. Settings & Configuration</h1>
+<p>Navigate to <strong>Settings</strong> in the sidebar.</p>
+
+<h2>13.1 Business Info</h2>
+<ul>
+  <li>Business Name, Phone, Address</li>
+  <li>KRA PIN (required for eTIMS compliance)</li>
+</ul>
+
+<h2>13.2 M-Pesa Settings</h2>
+<ul>
+  <li>Consumer Key & Secret (from Safaricom Developer Portal)</li>
+  <li>Shortcode (Paybill or Till number)</li>
+  <li>Passkey</li>
+  <li>Callback URL for payment confirmations</li>
+</ul>
+
+<h2>13.3 Terminal Settings</h2>
+<ul>
+  <li>Terminal ID (e.g., <code>T-001</code>)</li>
+  <li>Branch name</li>
+  <li>VAT Rate (default: 16%)</li>
+</ul>
+
+<h2>13.4 Notifications</h2>
+<ul>
+  <li>Low stock alerts</li>
+  <li>Daily sales summary</li>
+  <li>Email notifications (optional)</li>
+</ul>
+
+<h1 id="mpesa">14. M-Pesa Integration (STK Push)</h1>
+
+<h2>14.1 How It Works</h2>
+<ol>
+  <li>Cashier selects <strong>M-Pesa</strong> as payment method at checkout</li>
+  <li>Customer enters their M-Pesa phone number</li>
+  <li>System sends an <strong>STK Push</strong> to the customer's phone</li>
+  <li>Customer enters their M-Pesa PIN on their phone</li>
+  <li>Payment callback confirms success or failure</li>
+  <li>Sale is completed and receipt generated</li>
+</ol>
+
+<h2>14.2 Setup Steps</h2>
+<ol>
+  <li>Register at <strong>https://developer.safaricom.co.ke</strong></li>
+  <li>Create an app and get Consumer Key + Secret</li>
+  <li>Set up a Paybill or Till Number</li>
+  <li>Configure the callback URL in both Safaricom portal and POS Settings</li>
+  <li>Enter all credentials in <strong>Settings → M-Pesa Settings</strong></li>
+</ol>
+
+<div class="warning">
+  <strong>Note:</strong> M-Pesa requires a Safaricom Lipa Na M-Pesa sandbox for testing. Use test credentials before going live.
+</div>
+
+<h1 id="barcode">15. Barcode Scanner Setup</h1>
+
+<h2>15.1 Compatible Scanners</h2>
+<p>Any USB barcode scanner that works as a <strong>keyboard input device</strong> (HID mode) is compatible. Popular models:</p>
+<ul>
+  <li>Honeywell Voyager 1200g</li>
+  <li>Zebra LS2208</li>
+  <li>Datalogic QW2520</li>
+  <li>Any affordable 1D barcode scanner from Jumia/Kilimall</li>
+</ul>
+
+<h2>15.2 Setup</h2>
+<ol>
+  <li>Plug the scanner into a USB port</li>
+  <li>The scanner should be in <strong>keyboard/wedge mode</strong> (default for most scanners)</li>
+  <li>Open the POS Terminal (Sales page)</li>
+  <li>The barcode input is <strong>always focused</strong> — just scan directly</li>
+  <li>The scanner reads the barcode, types the numbers, and presses Enter</li>
+  <li>The product is automatically added to the cart</li>
+</ol>
+
+<h2>15.3 Testing Your Scanner</h2>
+<div class="step">
+  Open Notepad, scan a barcode. If numbers appear, the scanner is working correctly.
+</div>
+
+<h2>15.4 Barcode Format</h2>
+<ul>
+  <li>The system uses <strong>EAN-13</strong> barcodes (13 digits)</li>
+  <li>Sample barcodes in the seed data:
+    <ul>
+      <li><code>6161100100011</code> — Fresh Milk 500ml</li>
+      <li><code>6161100100028</code> — Fresh Milk 1L</li>
+      <li><code>6161100300028</code> — Coca-Cola 500ml</li>
+      <li><code>6161100600011</code> — White Bread 400g</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="troubleshooting">16. Troubleshooting</h1>
+
+<table>
+  <tr><th>Problem</th><th>Solution</th></tr>
+  <tr><td>Blank white screen</td><td>Clear browser localStorage, refresh. Make sure Vite is running.</td></tr>
+  <tr><td>"Invalid credentials" on login</td><td>Check username/PIN. Default: <code>admin</code> / <code>1234</code>. Ensure backend is running on port 3001.</td></tr>
+  <tr><td>"No product found" when scanning</td><td>Check if the barcode is in the database. Add product with matching barcode.</td></tr>
+  <tr><td>Crashes on page navigation</td><td>Refresh the page. Check browser console for errors.</td></tr>
+  <tr><td>Backend won't start (port in use)</td><td>Run <code>netstat -ano | findstr :3001</code>, kill the process, restart.</td></tr>
+  <tr><td>PowerShell blocks <code>npx</code></td><td>Run <code>Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass</code> first.</td></tr>
+  <tr><td>Database connection error</td><td>Check <code>.env</code> file. Ensure PostgreSQL is running. Verify username/password.</td></tr>
+  <tr><td>"Argument skip is missing" error</td><td>Ensure backend is rebuilt: <code>npx nest build</code></td></tr>
+  <tr><td>Scanner not adding items</td><td>Ensure POS Terminal tab is active. Check if the scanner types into Notepad.</td></tr>
+  <tr><td>M-Pesa payment not going through</td><td>Check M-Pesa credentials in Settings. Ensure callback URL is accessible.</td></tr>
+</table>
+
+<h1 id="api">17. API Reference</h1>
+
+<h2>Base URL</h2>
+<div class="step"><code>http://localhost:3001/api</code></div>
+
+<h2>Authentication</h2>
+<p>All endpoints require a JWT Bearer token in the <code>Authorization</code> header.</p>
+
+<h2>Core Endpoints</h2>
+<table>
+  <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+  <tr><td colspan="3" style="background:#f0fdf4;font-weight:600;">Auth</td></tr>
+  <tr><td>POST</td><td><code>/auth/login</code></td><td>Login with username + PIN</td></tr>
+  <tr><td colspan="3" style="background:#f0fdf4;font-weight:600;">Products</td></tr>
+  <tr><td>GET</td><td><code>/products</code></td><td>List all products</td></tr>
+  <tr><td>POST</td><td><code>/products</code></td><td>Create a product</td></tr>
+  <tr><td>PUT</td><td><code>/products/:id</code></td><td>Update a product</td></tr>
+  <tr><td>GET</td><td><code>/products/scan/:barcode</code></td><td>Look up product by barcode</td></tr>
+  <tr><td>POST</td><td><code>/products/:id/variants</code></td><td>Add a variant to product</td></tr>
+  <tr><td colspan="3" style="background:#f0fdf4;font-weight:600;">Sales</td></tr>
+  <tr><td>GET</td><td><code>/sales</code></td><td>List sales</td></tr>
+  <tr><td>POST</td><td><code>/sales</code></td><td>Create a sale</td></tr>
+  <tr><td>GET</td><td><code>/sales/:id</code></td><td>Get sale details</td></tr>
+  <tr><td>GET</td><td><code>/sales/:id/receipt</code></td><td>Download PDF receipt</td></tr>
+  <tr><td colspan="3" style="background:#f0fdf4;font-weight:600;">Customers</td></tr>
+  <tr><td>GET</td><td><code>/customers</code></td><td>List customers</td></tr>
+  <tr><td>POST</td><td><code>/customers</code></td><td>Create/upsert customer</td></tr>
+  <tr><td>GET</td><td><code>/customers/phone/:phone</code></td><td>Find by phone</td></tr>
+  <tr><td colspan="3" style="background:#f0fdf4;font-weight:600;">Inventory</td></tr>
+  <tr><td>GET</td><td><code>/inventory</code></td><td>List stock levels</td></tr>
+  <tr><td>GET</td><td><code>/inventory/low-stock</code></td><td>Low stock alerts</td></tr>
+  <tr><td>POST</td><td><code>/inventory/adjust</code></td><td>Adjust stock level</td></tr>
+  <tr><td>POST</td><td><code>/inventory/transfer</code></td><td>Transfer stock</td></tr>
+  <tr><td colspan="3" style="background:#f0fdf4;font-weight:600;">Payments</td></tr>
+  <tr><td>POST</td><td><code>/payments/initiate</code></td><td>Initiate M-Pesa STK Push</td></tr>
+  <tr><td>GET</td><td><code>/payments/:id/status</code></td><td>Check payment status</td></tr>
+  <tr><td colspan="3" style="background:#f0fdf4;font-weight:600;">Cash Management</td></tr>
+  <tr><td>POST</td><td><code>/cash-sessions/open</code></td><td>Open cash session</td></tr>
+  <tr><td>POST</td><td><code>/cash-sessions/:id/close</code></td><td>Close cash session</td></tr>
+  <tr><td>GET</td><td><code>/cash-sessions/:id/summary</code></td><td>Session summary</td></tr>
+  <tr><td colspan="3" style="background:#f0fdf4;font-weight:600;">Reports</td></tr>
+  <tr><td>GET</td><td><code>/reports/daily-summary</code></td><td>Daily sales summary</td></tr>
+  <tr><td>GET</td><td><code>/reports/top-products</code></td><td>Top selling products</td></tr>
+  <tr><td>GET</td><td><code>/dashboard/kpis</code></td><td>Dashboard metrics</td></tr>
+  <tr><td colspan="3" style="background:#f0fdf4;font-weight:600;">Settings</td></tr>
+  <tr><td>GET</td><td><code>/settings</code></td><td>Get all settings</td></tr>
+  <tr><td>POST</td><td><code>/settings</code></td><td>Update setting</td></tr>
+</table>
+
+<h2>Swagger Documentation</h2>
+<p>Interactive API docs available at: <strong>http://localhost:3001/docs</strong></p>
+
+<hr style="margin-top:60px;border:none;border-top:2px solid #e2e8f0;">
+<p style="text-align:center;color:#94a3b8;font-size:13px;margin-top:20px;">
+  POS System — Kenyan Supermarket<br>
+  Built with NestJS, React, Tailwind CSS, Prisma, PostgreSQL<br>
+  &copy; 2026 — All rights reserved
+</p>
+
+</body>
+</html>
