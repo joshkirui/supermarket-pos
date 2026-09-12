@@ -1,0 +1,11 @@
+node_modules
+dist
+.env
+*.log
+.git
+frontend
+release
+pos-system.iso
+POS_System_User_Guide.pdf
+POS_Presentation.pdf
+POS_Pitching_Script.pdf

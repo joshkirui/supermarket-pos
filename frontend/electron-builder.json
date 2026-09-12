@@ -1,0 +1,47 @@
+{
+  "appId": "com.pos.kenya",
+  "productName": "POS System Kenya",
+  "copyright": "Copyright © 2026 Joshua Kirui",
+  "directories": {
+    "output": "release"
+  },
+  "files": [
+    "dist/**/*",
+    "electron/**/*"
+  ],
+  "extraResources": [],
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      },
+      {
+        "target": "portable",
+        "arch": ["x64"]
+      }
+    ],
+    "icon": "public/favicon.ico"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "POS System Kenya",
+    "installerIcon": "public/favicon.ico",
+    "uninstallerIcon": "public/favicon.ico"
+  },
+  "portable": {
+    "artifactName": "POS-System-Kenya-${version}-portable.exe"
+  },
+  "linux": {
+    "target": ["AppImage"],
+    "icon": "public/favicon.ico"
+  },
+  "mac": {
+    "target": ["dmg"],
+    "icon": "public/favicon.ico"
+  }
+}
